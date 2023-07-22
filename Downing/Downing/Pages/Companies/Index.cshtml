@@ -2,3 +2,38 @@
 @model Downing.Pages.Companies.IndexModel
 @{
 }
+
+<style>
+    .hd {
+        font-weight: bold;
+    }
+
+    .tab {
+        width: 200px;
+    }
+</style>
+
+<div class="w3-container">
+    <h2>Companies</h2>
+    <br /><br />
+    <div class="w3-row">
+        <div class="w3-col hd tab" ><p>Company name</p></div>
+        <div class="w3-col hd tab" ><p>Company code</p></div>
+        <div class="w3-col hd tab" ><p>Current share price</p></div>
+        <div class="w3-col hd tab" ><p>Created date</p></div>
+    </div>
+
+    @foreach(var company in Model.Companies)
+    {
+        <div class="w3-row">
+            <div class="w3-col tab" ><p>@company.Name</p></div>
+            <div class="w3-col tab" ><p>@company.Code</p></div>
+            <div class="w3-col tab" ><p>@company.CurrentSharePrice</p></div>
+            <div class="w3-col tab" ><p>@company.Created</p></div>
+        </div>
+    }
+
+    <div class="w3-row">
+        <a class="w3-btn w3-blue w3-round" href="/Companies/Add">New company</a>
+    </div>
+</div>

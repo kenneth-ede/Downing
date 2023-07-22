@@ -17,7 +17,7 @@ namespace Downing.Data
             modelBuilder.Entity<Company>().HasKey(x => x.Id);
             modelBuilder.Entity<Company>().Property(x => x.CompanyName).HasMaxLength(100);
             modelBuilder.Entity<Company>().Property(x => x.Code).HasMaxLength(100);
-            modelBuilder.Entity<Company>().Property(x => x.SharePrice).HasPrecision(18, 4);
+            modelBuilder.Entity<Company>().Property(x => x.SharePrice).HasPrecision(18, 5);
 
             modelBuilder.Entity<Investor>().HasKey(x => x.Id);
             modelBuilder.Entity<Investor>().HasOne(x => x.Company);
