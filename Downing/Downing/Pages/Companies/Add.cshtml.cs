@@ -1,4 +1,5 @@
 using Downing.Data;
+using Downing.Queries;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
@@ -13,7 +14,7 @@ namespace Downing.Pages.Companies
         [BindProperty]
         public NewCompany NewCompany { get;set; } = new NewCompany();
 
-        public string ErrorMessage { get; set; } = string.Empty;
+        public string ErrorMessage { get; set; } = String.Empty;
 
         public AddModel(IDbContextFactory<DatabaseContext> contextFactory)
         {
@@ -27,8 +28,20 @@ namespace Downing.Pages.Companies
         public async Task<IActionResult> OnPostAsync()
         {
             if (!ModelState.IsValid)
+            {
+                ErrorMessage = String.Empty;
                 return Page();
+            }
 
+            using var db = _contextFactory.CreateDbContext();
+
+            if (await CompanyQueries.CompanyExists(db, NewCompany.Name))
+            {
+                ErrorMessage = Error.CompanyExists;
+                return Page();
+            }
+
+            await CompanyQueries.AddCompany(db, NewCompany);
 
             return RedirectToPage(PageNames.Companies);
         }
@@ -37,16 +50,15 @@ namespace Downing.Pages.Companies
     public class NewCompany
     {
         [Required(ErrorMessage = Error.Name)]
-        [RegularExpression(RegExes.All)]
         [MaxLength(100)]
         public string Name { get; set; }
 
         [Required(ErrorMessage = Error.Code)]
-        [RegularExpression(RegExes.AlphaNumeric)]
+        [RegularExpression(RegExes.AlphaNumeric, ErrorMessage = Error.CodeAlphaNumeric)]
         [MaxLength(10, ErrorMessage = Error.Max10)]
         public string Code { get; set; }
 
-        [RegularExpression(RegExes.Decimal)]
-        public decimal? SharePrice { get; set; }
+        [RegularExpression(RegExes.SharePrice, ErrorMessage = Error.SharePrice)]
+        public string? SharePrice { get; set; }
     }
 }

@@ -2,7 +2,60 @@
 @model Downing.Pages.Companies.AddModel
 @{
 }
+<style>
+    .validation {
+        color: red;
+    }
+</style>
 
 <div class="w3-container">
     <h2>Add a new company</h2>
+    <br />
+    <br />
+
+    <div class="validation" asp-validation-summary="All"></div>
+    @if(!string.IsNullOrEmpty(Model.ErrorMessage))
+    {
+        <div class="w3-row validation">
+            <ul><li>@Model.ErrorMessage</li></ul>
+        </div>
+    }
+
+    <form method="post">
+        <div class="w3-row">
+            <label class="w3-quarter" asp-for="@Model.NewCompany.Name">Company name</label>
+            <input class="w3-quarter" asp-for="@Model.NewCompany.Name" />
+            <br />
+            <br />
+        </div>
+        <div class="w3-row">
+            <label class="w3-quarter" asp-for="@Model.NewCompany.Code">Company code</label>
+            <input class="w3-quarter" style='text-transform:uppercase' asp-for="@Model.NewCompany.Code" />
+            <br />
+            <br />
+        </div>
+        <div class="w3-row">
+            <label class="w3-quarter" asp-for="@Model.NewCompany.SharePrice">Share price</label>
+            <input class="w3-quarter" asp-for="@Model.NewCompany.SharePrice" onkeypress="keypress(this, event);" />
+            <br />
+            <br />
+        </div>
+        <br />
+        <br />
+
+        <div class="w3-row">
+            <button type="submit" class="w3-btn w3-blue w3-round">Save</button>
+            <a href="/Companies/Index" class="w3-btn w3-red w3-round">Cancel</a>
+        </div>
+    </form>
 </div>
+
+<script type="text/javascript">
+    function keypress(elem, e) {
+        var key = e.key;
+
+        if (!(key >= 0 && key <= 9) && (key != '.')) {
+            e.preventDefault();
+        } 
+    };
+</script>
