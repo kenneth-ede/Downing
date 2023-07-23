@@ -20,23 +20,26 @@
             <ul><li>@Model.ErrorMessage</li></ul>
         </div>
     }
+    <div class="validation">
+        <ul id="errorlist"></ul>
+    </div>
 
     <form method="post">
         <div class="w3-row">
-            <label class="w3-quarter" asp-for="@Model.NewCompany.Name">Company name</label>
+            <label class="w3-quarter" asp-for="@Model.NewCompany.Name">Company name (required)</label>
             <input class="w3-quarter" asp-for="@Model.NewCompany.Name" />
             <br />
             <br />
         </div>
         <div class="w3-row">
-            <label class="w3-quarter" asp-for="@Model.NewCompany.Code">Company code</label>
+            <label class="w3-quarter" asp-for="@Model.NewCompany.Code">Company code (required)</label>
             <input class="w3-quarter" style='text-transform:uppercase' asp-for="@Model.NewCompany.Code" />
             <br />
             <br />
         </div>
         <div class="w3-row">
             <label class="w3-quarter" asp-for="@Model.NewCompany.SharePrice">Share price</label>
-            <input class="w3-quarter" asp-for="@Model.NewCompany.SharePrice" onkeypress="keypress(this, event);" />
+            <input class="w3-quarter" asp-for="@Model.NewCompany.SharePrice" onkeypress="toupper(this, event);" />
             <br />
             <br />
         </div>
@@ -44,14 +47,49 @@
         <br />
 
         <div class="w3-row">
-            <button type="submit" class="w3-btn w3-blue w3-round">Save</button>
+            <button type="submit" class="w3-btn w3-blue w3-round" disabled>Save</button>
             <a href="/Companies/Index" class="w3-btn w3-red w3-round">Cancel</a>
         </div>
     </form>
 </div>
 
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
 <script type="text/javascript">
-    function keypress(elem, e) {
+    $(document).ready(function () {
+        $("input").blur(function(elem) {
+            var inputs = $("input");
+
+            var isValid = true;
+            var errors = [];
+
+            for (var i = 0; i < inputs.length -1; i++) {
+                var pattern = $(inputs[i]).attr('data-val-regex-pattern');
+                var msg = $(inputs[i]).attr('data-val-regex');
+                var required = $(inputs[i]).attr('data-val-required');
+                var value = $(inputs[i]).val();
+
+                if (required && !value) {
+                    //errors.push(required);
+                    isValid = false;
+                }
+
+                if (pattern && value && !value.match(pattern)) {
+                    errors.push(msg);
+                    isValid = false;
+                }
+            }
+
+            $("button").attr('disabled', !isValid);
+
+            $('#errorlist').empty();
+
+            for(var i = 0; i < errors.length; i++) {
+                $('#errorlist').append('<li>' + errors[i] + '</li>');
+            }
+        });
+    });
+
+    function toupper(elem, e) {
         var key = e.key;
 
         if (!(key >= 0 && key <= 9) && (key != '.')) {

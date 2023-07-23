@@ -9,6 +9,7 @@ namespace Downing.Pages.Companies
 {
     public class AddModel : PageModel
     {
+        private readonly ILogger<AddModel> _logger;
         private readonly IDbContextFactory<DatabaseContext> _contextFactory;
 
         [BindProperty]
@@ -16,8 +17,9 @@ namespace Downing.Pages.Companies
 
         public string ErrorMessage { get; set; } = String.Empty;
 
-        public AddModel(IDbContextFactory<DatabaseContext> contextFactory)
+        public AddModel(ILogger<AddModel> logger, IDbContextFactory<DatabaseContext> contextFactory)
         {
+            _logger = logger;
             _contextFactory = contextFactory;
         }
 
@@ -41,7 +43,16 @@ namespace Downing.Pages.Companies
                 return Page();
             }
 
-            await CompanyQueries.AddCompany(db, NewCompany);
+            try
+            {
+                await CompanyQueries.AddCompany(db, NewCompany);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex.Message);
+                ErrorMessage = Error.DbSaveError;
+                return Page();
+            }
 
             return RedirectToPage(PageNames.Companies);
         }

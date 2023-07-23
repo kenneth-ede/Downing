@@ -13,6 +13,7 @@
         public const string CompanyExists = "Company already exists";
         public const string SharePrice = "Share price can have up to 5 decimals";
         public const string CodeAlphaNumeric = "Company code must be alpha-numeric";
+        public const string DbSaveError = "An error occurred attempting to add the new company";
     }
 
     public static class RegExes
